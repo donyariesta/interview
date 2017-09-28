@@ -59,7 +59,15 @@ function autoUpload(uploadURL) {
       alert('No web audio support in this browser!');
     }
 
+    if(id_recorder_data.value != ''){
+        var json = JSON.parse(id_recorder_data.value);
 
+        var au = document.createElement('audio');
+        au.controls = true;
+        au.src = json[0];
+        recordingslist.appendChild(au);
+        console.log(id_recorder_data);
+    }
     navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
     });
   };

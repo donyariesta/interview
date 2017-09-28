@@ -44,7 +44,12 @@ class qtype_interview_renderer extends qtype_renderer {
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         global $DB, $PAGE,$CFG;
-        $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/response.js') );
+        $readonly = $options->readonly;
+        if(!$readonly){
+            $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/response.js') );
+        }else{
+            $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/preview.js') );
+        }
         $question = $qa->get_question();
 
         $inputname = $qa->get_qt_field_name('answer');
@@ -61,15 +66,17 @@ class qtype_interview_renderer extends qtype_renderer {
         $options = $DB->get_record('qtype_interview_options', array('questionid' => $question->id));
         if ($options) {
             $result .= html_writer::tag('button', 'Play Question!', array('id'=>'qtypeInterviewQuestionControll', 'data'=>$options->url));
-            $result .= html_writer::tag('button', 'Stop Recording!', array('id'=>'qtypeInterviewQuestionStopRecord', 'class'=>'hidden', 'data'=>$uploadURL));
-            $result .= html_writer::tag('input', '', array('type'=>'hidden', 'name'=>$inputname,'id'=>'id_recorder_data', 'value'=>$currentanswer));
-            $result .= html_writer::tag('div', '', array('id'=>'recordingslist'));
-            $result .= '<script type="text/javascript" src="'.$recorderJS.'"></script>';
+            if(!$readonly){
+                $result .= html_writer::tag('button', 'Stop Recording!', array('id'=>'qtypeInterviewQuestionStopRecord', 'class'=>'hidden', 'data'=>$uploadURL));
+                $result .= '<script type="text/javascript" src="'.$recorderJS.'"></script>';
+            }
         }
 
         $result .= html_writer::end_tag('div');
         $result .= html_writer::end_tag('div');
-        $result .= html_writer::start_tag('div', array('class' => 'response'));
+        $result .= html_writer::start_tag('div', array('class' => 'answer'));
+        $result .= html_writer::tag('div', '', array('id'=>'recordingslist'));
+        $result .= html_writer::tag('input', '', array('type'=>'hidden', 'name'=>$inputname,'id'=>'id_recorder_data', 'value'=>$currentanswer));
 
 
 

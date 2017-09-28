@@ -55,7 +55,8 @@ class qtype_interview_question extends question_with_responses {
      * @return array|string.
      */
     public function get_expected_data() {
-        return array();
+        $expecteddata = array('answer' => PARAM_RAW);
+        return $expecteddata;
     }
 
     /**
@@ -64,8 +65,8 @@ class qtype_interview_question extends question_with_responses {
      * @return array|null Null if it is not possible to compute a correct response.
      */
     public function get_correct_response() {
-        // $response = parent::get_correct_response();
-        // var_dump($response);die();
+        $response = parent::get_correct_response();
+        var_dump($response);die('get_correct_response');
         return null;
     }
 
@@ -84,25 +85,18 @@ class qtype_interview_question extends question_with_responses {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-
     public function is_complete_response(array $response) {
-        var_dump($response);
-        var_dump('is_complete_response');die();
-        // The response is complete iff all of our requirements are met.
-        return true;
+        return array_key_exists('answer', $response) && ($response['answer'] !== '');
     }
 
-    public function is_same_response(array $prevresponse, array $newresponse) {
-        // var_dump('is_same_response');die();
-        return false;
+    public function is_same_response(array $old, array $new) {
+        $value1 = isset($old['answer']) ? (string) $old['answer'] : '';
+        $value2 = isset($new['answer']) ? (string) $new['answer'] : '';
+        return $value1 === $value2;
     }
 
     public function summarise_response(array $response) {
-        var_dump('summarise_response');die();
-        if (isset($response['answer'])) {
-            return $response['answer'];
-        } else {
-            return null;
-        }
+        var_dump($response['answer']);
+        return isset($response['answer']) ? $response['answer']: null;
     }
 }
