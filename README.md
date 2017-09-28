@@ -1,8 +1,6 @@
 # interview #
 
-TODO Describe the plugin shortly here.
-
-TODO Provide more detailed description here.
+Moodle plugin for interview question type. the plugins help you to create quiz activity by simulate interview. Its help the teacher to grade their student based on student spontaneously response
 
 ## License ##
 
