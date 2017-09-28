@@ -10,30 +10,35 @@ function startUserMedia(stream) {
     recorder = new Recorder(input);
 }
 
-function startRecording(button, uploadURL) {
-    recordingslist.innerHTML = '';
-    qtypeInterviewQuestionStopRecord.className='';
+function startRecording(e) {
+    var parent = findParentBySelector(e.target, '.qtypeInterview');
+    var stopRecord = parent.querySelector('.stopRecord');
+    var audioWrapper = parent.querySelector('.audioWrapper');
+    audioWrapper.innerHTML = '';
+    stopRecord.className='';
     recorder && recorder.record();
 }
 
 function stopRecording(e) {
-    qtypeInterviewQuestionStopRecord.className='hidden';
+    e.target.className = 'stopRecord hidden'
     recorder && recorder.stop();
-
-    autoUpload(e.target.getAttribute('data'));
+    autoUpload(e);
     recorder.clear();
 }
 
-function autoUpload(uploadURL) {
+function autoUpload(e, uploadURL) {
+    var parent = findParentBySelector(e.target, '.qtypeInterview');
+    var audioWrapper = parent.querySelector('.audioWrapper');
+    var recorder_data = parent.querySelector('.recorder_data');
+    var uploadURL = e.target.getAttribute('data');
     recorder && recorder.exportWAV(function(blob) {
         var url = URL.createObjectURL(blob);
         var au = document.createElement('audio');
-        var recorderData = id_recorder_data.value;
-        var previous = id_recorder_data.value != '' ? JSON.parse(id_recorder_data.value) : ['',''];
         au.controls = true;
         au.src = url;
-        recordingslist.appendChild(au);
+        audioWrapper.appendChild(au);
 
+        var previous = recorder_data.value != '' ? JSON.parse(recorder_data.value) : ['',''];
         var fd = new FormData();
         fd.append('repo_upload_file', blob);
         fd.append('previous', previous[1]);
@@ -41,7 +46,7 @@ function autoUpload(uploadURL) {
         xhr.open('POST', uploadURL, true);
         xhr.onload = function(){
             var json = JSON.parse(xhr.response);
-            id_recorder_data.value = JSON.stringify([json.url,json.file]);
+            recorder_data.value = JSON.stringify([json.url,json.file]);
         }
         xhr.send(fd);
     });
@@ -59,37 +64,41 @@ function autoUpload(uploadURL) {
       alert('No web audio support in this browser!');
     }
 
-    if(id_recorder_data.value != ''){
-        var json = JSON.parse(id_recorder_data.value);
-
-        var au = document.createElement('audio');
-        au.controls = true;
-        au.src = json[0];
-        recordingslist.appendChild(au);
-        console.log(id_recorder_data);
+    var interviewItems = document.querySelectorAll('.qtypeInterview .answer .recorder_data');
+    var audioWrapper = document.querySelectorAll('.qtypeInterview .answer .audioWrapper')[0];
+    for(var i=0; i<interviewItems.length; i++){
+        var recorder_data = interviewItems[i];
+        if(recorder_data.value != ''){
+            var json = JSON.parse(recorder_data.value);
+            var au = document.createElement('audio');
+            au.controls = true;
+            au.src = json[0];
+            audioWrapper.appendChild(au);
+        }
     }
     navigator.getUserMedia({audio: true}, startUserMedia, function(e) {
     });
   };
 
-  qtypeInterviewQuestionControll.addEventListener('click', function(e) {
+  bindElementBySelector('.qtypeInterview .playControll','click',function(e){
       e.preventDefault();
 
-      if(typeof(qtypeInterviewQuestionPlayer)!='undefined'){qtypeInterviewQuestionPlayer.remove()};
+      var parent = findParentBySelector(e.target, '.qtypeInterview');
+      var questionPlayer = parent.querySelector('.questionPlayer');
+      if(typeof(questionPlayer)!='undefined' && questionPlayer != null){questionPlayer.remove()};
       var au = document.createElement('audio');
-      au.id = 'qtypeInterviewQuestionPlayer';
+      au.className = 'questionPlayer hidden';
       au.src = e.target.getAttribute('data');
-      au.className = 'hidden';
-      document.getElementsByTagName('body')[0].appendChild(au);
-      qtypeInterviewQuestionPlayer.play();
-      qtypeInterviewQuestionControll.disabled = true;
-      qtypeInterviewQuestionPlayer.onended = () => {
-          startRecording();
+      parent.appendChild(au);
+      var questionPlayer = parent.querySelector('.questionPlayer');
+      questionPlayer.play();
+      e.target.disabled = true;
+      questionPlayer.onended = () => {
+          startRecording(e);
       }
-
   });
 
-  qtypeInterviewQuestionStopRecord.addEventListener('click', function(e) {
+  bindElementBySelector('.qtypeInterview .stopRecord','click',function(e){
       e.preventDefault();
       stopRecording(e);
-  })
+  });
