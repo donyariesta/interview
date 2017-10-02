@@ -96,7 +96,7 @@ class qtype_interview_question extends question_with_responses {
     }
 
     public function summarise_response(array $response) {
-        var_dump($response['answer']);
+        file_save_draft_area_files(0, SYSCONTEXTID, 'qtype_interview', 'response', 0, []);
         return isset($response['answer']) ? $response['answer']: null;
     }
 }

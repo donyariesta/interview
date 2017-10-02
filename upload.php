@@ -17,15 +17,16 @@ if (!$record = $DB->get_record_sql($sql)) {
 $repo_id   = $record->id;
 
 $contextid = optional_param('ctx_id', SYSCONTEXTID, PARAM_INT); // Context ID
-$accepted_types  = optional_param_array('accepted_types', '*', PARAM_RAW);
+// $accepted_types  = optional_param_array('accepted_types', '*', PARAM_RAW);
 $maxbytes  = optional_param('maxbytes', 0, PARAM_INT);          // Maxbytes
 
 $repooptions = array(
     'ajax' => true,
-    'mimetypes' => $accepted_types
+    'mimetypes' => array('.wav')
 );
 
 $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
+// var_dump($repo);die();
 list($context) = get_context_info_array($contextid);
 // Make sure maxbytes passed is within site filesize limits.
 $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, 0, $maxbytes);

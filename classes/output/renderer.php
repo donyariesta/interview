@@ -46,15 +46,23 @@ class qtype_interview_renderer extends qtype_renderer {
         global $DB, $PAGE,$CFG;
         $readonly = $options->readonly;
         $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/main.js') );
+        $currentanswer = $qa->get_last_qt_var('answer');
         if(!$readonly){
             $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/response.js') );
         }else{
             $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/preview.js') );
+            if(!empty($currentanswer)){
+                $exploded = json_decode($currentanswer);
+                if(!empty($exploded[1])){
+                    $exploded[0] = (string) moodle_url::make_pluginfile_url(SYSCONTEXTID, 'qtype_interview', 'response', 0, '/', $exploded[1]);
+                    $currentanswer = json_encode($exploded);
+                }
+            }
+
         }
         $question = $qa->get_question();
 
         $inputname = $qa->get_qt_field_name('answer');
-        $currentanswer = $qa->get_last_qt_var('answer');
 
         $uploadURL = new moodle_url('/question/type/interview/upload.php');
         $recorderJS = new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/recorder.js');

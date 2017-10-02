@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/questionlib.php');
+require_once($CFG->libdir.'/filelib.php');
 require_once(__DIR__ . '/../../../repository/lib.php');
 
 /**
@@ -51,8 +52,10 @@ class qtype_interview extends question_type {
         }
 
         list($url, $recorder) = json_decode($formdata->recorder_data);
+        file_save_draft_area_files(0, SYSCONTEXTID, 'qtype_interview', 'question', 0, []);
+        $url = moodle_url::make_pluginfile_url(SYSCONTEXTID, 'qtype_interview', 'question', 0, '/', $recorder);
         $options->recorder = $recorder;
-        $options->url = $url;
+        $options->url = (string)$url;
         $options->response_type = $formdata->response_type;
         $options->repeat_time = $formdata->repeat_time;
         $options->allow_retry_record = $formdata->allow_retry_record;
