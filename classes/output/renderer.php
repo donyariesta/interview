@@ -47,6 +47,7 @@ class qtype_interview_renderer extends qtype_renderer {
         $readonly = $options->readonly;
         $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/main.js') );
         $currentanswer = $qa->get_last_qt_var('answer');
+        $dataTrial = 0;
         if(!$readonly){
             $PAGE->requires->js( new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/response.js') );
         }else{
@@ -57,6 +58,7 @@ class qtype_interview_renderer extends qtype_renderer {
                     $exploded[0] = (string) moodle_url::make_pluginfile_url(SYSCONTEXTID, 'qtype_interview', 'response', 0, '/', $exploded[1]);
                     $currentanswer = json_encode($exploded);
                 }
+                $dataTrial = isset($exploded[2]) ? $exploded[2] : 0;
             }
 
         }
@@ -68,15 +70,22 @@ class qtype_interview_renderer extends qtype_renderer {
         $recorderJS = new moodle_url($CFG->wwwroot . '/question/type/interview/scripts/recorder.js');
 
         $result = '';
-        $result .= html_writer::start_tag('div', array('class' => 'qtypeInterview'));
+        $result .= html_writer::start_tag('div', array('class' => 'qtypeInterview','data-trial' => $dataTrial));
         $result .= html_writer::tag('p', $question->questiontext);
         $result .= html_writer::start_tag('div', array('class' => 'question'));
 
         $options = $DB->get_record('qtype_interview_options', array('questionid' => $question->id));
         if ($options) {
-            $result .= html_writer::tag('button', 'Play Question!', array('class'=>'playControll', 'data'=>$options->url));
+            if(($options->repeat_time == 0 || $options->repeat_time > $dataTrial) || $readonly){
+                $result .= html_writer::tag('button', get_string('play_question_button', 'qtype_interview'), array('class'=>'playControll', 'data'=>$options->url));
+                if(!$readonly && $options->response_type == 0){
+                    $result .= html_writer::tag('button', get_string('record_response_button', 'qtype_interview'), array('class'=>'recordControll hidden'));
+                }
+            }
             if(!$readonly){
-                $result .= html_writer::tag('button', 'Stop Recording!', array('class'=>'stopRecord hidden', 'data'=>$uploadURL));
+                $result .= html_writer::tag('button', get_string('stop_recording_button', 'qtype_interview'), array('class'=>'stopRecord hidden', 'data'=>$uploadURL));
+                $recordingURL = new moodle_url('/question/type/interview/pix/recording.gif');
+                $result .= '<div class="hidden interview_recording_icon" style="float: left;height: 29px;overflow: hidden;width: 29px;"><img style="margin-top: -110px;margin-left: -110px;width: 250px;" src="'.$recordingURL.'"></div>';
                 $result .= '<script type="text/javascript" src="'.$recorderJS.'"></script>';
             }
         }
@@ -86,6 +95,12 @@ class qtype_interview_renderer extends qtype_renderer {
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         $result .= html_writer::tag('div', '', array('class'=>'audioWrapper'));
         $result .= html_writer::tag('input', '', array('type'=>'hidden', 'name'=>$inputname,'class'=>'recorder_data', 'value'=>$currentanswer));
+
+        unset($options->id);
+        unset($options->questionid);
+        unset($options->recorder);
+        unset($options->url);
+        $result .= html_writer::tag('input', '', array('type'=>'hidden','class'=>'question_options', 'value'=>json_encode((array)$options)));
         $result .= html_writer::end_tag('div');
         $result .= html_writer::end_tag('div');
 

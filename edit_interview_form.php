@@ -63,17 +63,17 @@ class qtype_interview_edit_form extends question_edit_form {
         $mform->addHelpButton('response_type', 'response_type', 'qtype_interview');
         $mform->setType('response_type', PARAM_INT);
 
-        $mform->addElement('text', 'repeat_time', get_string('repeat_time', 'qtype_interview'),
-                array('size' => 2));
+        $mform->addElement('select', 'repeat_time',
+                get_string('repeat_time', 'qtype_interview'), $qtype->times_options());
         $mform->setType('repeat_time', PARAM_INT);
-        $mform->setDefault('repeat_time', 1);
+        $mform->setDefault('repeat_time', 0);
         $mform->addHelpButton('repeat_time', 'repeat_time', 'qtype_interview');
 
-        $mform->addElement('select', 'allow_retry_record',
-                get_string('allow_retry_record', 'qtype_interview'), $qtype->allow_retry_record_options());
-        $mform->setDefault('allow_retry_record', 0);
-        $mform->addHelpButton('allow_retry_record', 'allow_retry_record', 'qtype_interview');
-        $mform->setType('allow_retry_record', PARAM_INT);
+        // $mform->addElement('select', 'allow_retry_record',
+        //         get_string('allow_retry_record', 'qtype_interview'), $qtype->allow_retry_record_options());
+        // $mform->setDefault('allow_retry_record', 0);
+        // $mform->addHelpButton('allow_retry_record', 'allow_retry_record', 'qtype_interview');
+        // $mform->setType('allow_retry_record', PARAM_INT);
 
     }
 

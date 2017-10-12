@@ -32,13 +32,22 @@ $string['pluginnameadding'] = 'Adding an Interview question';
 $string['pluginname_help'] = 'You need to record the question and the respondent will listen to the question. The respondent submit the respond by record their voice online. A response template may be provided. Responses must be graded manually.';
 $string['label_recordquestion'] = 'Record Question';
 
-$string['responseimmediately'] = 'Auto record after question played';
-$string['responsewhenready'] = 'Record when ready';
-$string['response_type'] = 'Participant Response';
+$string['responseimmediately'] = 'Response immediately';
+$string['responsewhenready'] = 'Response when ready';
+$string['response_type'] = 'Response Rule';
 $string['response_type_help'] = 'The condition to determine how participant should respond the answer after hearing recorded question.';
 
 $string['repeat_time'] = 'Repeat Question';
 $string['repeat_time_help'] = 'How many times the participant can play the recorded question.';
+$string['one_time'] = '1 Time';
+$string['two_time'] = '2 Times';
+$string['three_time'] = '3 Times';
+$string['four_time'] = '4 Times';
+$string['five_time'] = '5 Times';
+$string['no_limit'] = 'No Limit';
+$string['play_question_button'] = 'Play Question!';
+$string['stop_recording_button'] = 'Stop Recording!';
+$string['record_response_button'] = 'Record Response!';
 
 $string['allow_retry_record'] = 'Allow Retry Response';
 $string['allow_retry_record_help'] = 'To determine if participant allowed to try record their answer many times or just once.';

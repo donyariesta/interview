@@ -58,7 +58,7 @@ class qtype_interview extends question_type {
         $options->url = (string)$url;
         $options->response_type = $formdata->response_type;
         $options->repeat_time = $formdata->repeat_time;
-        $options->allow_retry_record = $formdata->allow_retry_record;
+        // $options->allow_retry_record = $formdata->allow_retry_record;
         $DB->update_record('qtype_interview_options', $options);
 
         $logRecordedFile = $DB->get_record('qtype_interview_log_record', array('recorder' => $recorder));
@@ -70,15 +70,25 @@ class qtype_interview extends question_type {
 
     public function response_type_options() {
         return array(
-            1 => get_string('responseimmediately', 'qtype_interview'),
             0 => get_string('responsewhenready', 'qtype_interview'),
+            1 => get_string('responseimmediately', 'qtype_interview'),
+        );
+    }
+    public function times_options() {
+        return array(
+            0 => get_string('no_limit', 'qtype_interview'),
+            1 => get_string('one_time', 'qtype_interview'),
+            2 => get_string('two_time', 'qtype_interview'),
+            3 => get_string('three_time', 'qtype_interview'),
+            4 => get_string('four_time', 'qtype_interview'),
+            5 => get_string('five_time', 'qtype_interview'),
         );
     }
 
     public function allow_retry_record_options() {
         return array(
-            1 => get_string('no', 'qtype_interview'),
-            0 => get_string('yes', 'qtype_interview'),
+            0 => get_string('no', 'qtype_interview'),
+            1 => get_string('yes', 'qtype_interview'),
         );
     }
 
